@@ -1,120 +1,159 @@
-/* timer.css */
-
+/* Timer container styling */
 .timer-container {
-    font-family: Arial, sans-serif;
-    max-width: 700px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    margin-top: 50px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .timer-container h1 {
-    text-align: center;
-    color: #45a049;
-  }
-  .timer-input{
-    margin-top: 10px;
-  }
-  
-  .timer-display {
-    font-size: 3em;
-    text-align: center;
-    margin: 20px 0;
-    background-color: #ffffff;
-    padding: 10px;
-    color: #45a049;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-  }
-  
-  .timer-controls {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin: 20px 0;
-  }
-  
-  .timer-controls button {
-    background-color: #4CAF50;
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .timer-controls button:hover {
-    background-color: #45a049;
-  }
-  
-  .task-counter {
-    text-align: center;
-    margin: 20px 0;
-  }
-  
-  .end-day-button {
-    display: block;
-    width: 100%;
-    background-color: #f44336;
-    border: none;
-    color: white;
+  font-family: Arial, sans-serif;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin-top: 50px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.timer-container h1 {
+  text-align: center;
+  color: #45a049;
+}
+
+.timer-input {
+  margin-top: 10px;
+}
+
+/* Timer display */
+.timer-display {
+  font-size: 3em;
+  text-align: center;
+  margin: 20px 0;
+  background-color: #ffffff;
+  padding: 10px;
+  color: #45a049;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+/* Timer controls styling */
+.timer-controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.timer-controls button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.timer-controls button:hover {
+  background-color: #45a049;
+}
+
+/* Task counter styling */
+.task-counter {
+  text-align: center;
+  margin: 20px 0;
+}
+
+/* End day button styling */
+.end-day-button {
+  display: block;
+  width: 100%;
+  background-color: #f44336;
+  border: none;
+  color: white;
+  padding: 15px;
+  font-size: 18px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 20px 0;
+}
+
+.end-day-button:hover {
+  background-color: #e53935;
+}
+
+/* Modal styling */
+.modal {
+  width: 700px;
+  margin: auto;
+  margin-top: 200px;
+  height: auto;
+}
+
+.modal-content {
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #fff;
+  text-align: center;
+}
+
+.modal-content h2 {
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.modal-content p {
+  margin-bottom: 20px;
+  color: #666;
+}
+
+.modal-content button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.modal-content button:hover {
+  background-color: #45a049;
+}
+
+/* Media Queries for small screens */
+@media (max-width: 600px) {
+  .timer-container {
     padding: 15px;
-    font-size: 18px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin: 20px 0;
   }
-  
-  .end-day-button:hover {
-    background-color: #e53935;
+
+  .timer-display {
+    font-size: 2.5em;
   }
-  .modal{
-    width: 700px;
-    margin: auto;
-    margin-top: 200px;
-    height: 500px;
+
+  .timer-controls {
+    flex-direction: column;
+    gap: 15px;
   }
-  .feedback-container{
-    display: flex;
-    justify-content: center;
+
+  .timer-controls button {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
   }
-  
-  .modal-content {
-    padding: 20px;
-    border-radius: 8px;
-    background-color: #fff;
-    text-align: center;
-  }
-  
-  .modal-content h2 {
-    margin-bottom: 10px;
-    color: #333;
-  }
-  
-  .modal-content p {
-    margin-bottom: 20px;
-    color: #666;
-  }
-  
-  .modal-content button {
-    background-color: #4CAF50;
-    border: none;
-    color: white;
-    padding: 10px 20px;
+
+  .end-day-button {
     font-size: 16px;
-    border-radius: 5px;
-    cursor: pointer;
+    padding: 12px;
   }
-  
-  .modal-content button:hover {
-    background-color: #45a049;
+
+  .modal {
+    width: 90%;
+    margin-top: 50px;
   }
-  
+
+  .modal-content {
+    padding: 15px;
+  }
+
+  .modal-content button {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+  }
+}
