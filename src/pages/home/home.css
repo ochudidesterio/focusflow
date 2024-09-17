@@ -1,0 +1,107 @@
+/* HomePage.css */
+
+.homepage-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  h1 {
+    font-size: 2.5em;
+    color: #4CAF50;
+    margin-bottom: 20px;
+  }
+  
+  .app-description p {
+    font-size: 1.2em;
+    color: #333;
+    margin: 20px 0;
+    line-height: 1.6;
+  }
+  
+  .features-section {
+    background-color: #f9f9f9;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 10px;
+  }
+  
+  .features-section h2 {
+    font-size: 1.8em;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .feature {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    font-size: 1.1em;
+    color: #555;
+    margin-bottom: 10px;
+  }
+  
+  .feature-icon {
+    color: #279631;
+    font-size: 1.5em;
+    margin-right: 10px;
+  }
+  
+  .motivational-section {
+    background-color: #e8f5e9;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 10px;
+  }
+  
+  .motivational-section h3 {
+    font-size: 1.5em;
+    color: #388e3c;
+  }
+  
+  .motivational-section p {
+    font-size: 1.2em;
+    color: #333;
+    margin-top: 10px;
+    font-style: italic;
+  }
+  
+  .navigation-section {
+    margin-top: 30px;
+  }
+  
+  .primary-btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    margin: 10px;
+  }
+  
+  .primary-btn:hover {
+    background-color: #45a049;
+  }
+  
+  @media (max-width: 600px) {
+    .homepage-container {
+      padding: 10px;
+    }
+  
+    h1 {
+      font-size: 2em;
+    }
+  
+    .features-section, .motivational-section {
+      padding: 15px;
+    }
+  
+    .primary-btn {
+      font-size: 0.9em;
+    }
+  }
+  
