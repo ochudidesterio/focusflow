@@ -1,0 +1,19 @@
+{
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 3306,
+            "driver": "MySQL",
+            "name": "SQL local",
+            "database": "focusflow",
+            "username": "root",
+            "password": "kdeii9msbx",
+            "connectionTimeout": 10000
+        }
+    ]
+}

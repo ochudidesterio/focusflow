@@ -4,6 +4,9 @@ import './timer.css';
 import { MdCheckCircle } from "react-icons/md";
 import Feedback from '../../components/feeback/Feedback';
 import Meditate from '../../components/meditate/Meditate';
+import { useSelector } from 'react-redux';
+import { getUser } from '../../redux/userSlice';
+import api from '../../api/api';
 
 
 // motivational quotes and break suggestions
@@ -48,7 +51,9 @@ const WorkBreakTimer = () => {
   const [selectedQuote, setSelectedQuote] = useState('');
   const [selectedSuggestion, setSelectedSuggestion] = useState('');
 
+  const user = useSelector(getUser)
 
+  let taskObj;
 
   // Set a random motivational quote when the component mounts
   useEffect(() => {
@@ -93,11 +98,11 @@ const WorkBreakTimer = () => {
   // Play notification sound when playSound is true
   useEffect(() => {
     if (playSound) {
-      const audio = new Audio(require('../../assets/notification.mp3')); // Dynamically require the audio
+      const audio = new Audio(require('../../assets/notification.mp3')); 
       audio.play().catch(error => {
         console.error("Error playing sound:", error);
       });
-      setPlaySound(false); // Reset playSound after the audio plays
+      setPlaySound(false); 
     }
   }, [playSound]);
 
@@ -113,8 +118,26 @@ const WorkBreakTimer = () => {
     setTimeLeft(isWorkTimer ? workTime * 60 : breakTime * 60);
   };
 
-  // Increment the completed tasks counter
-  const handleTaskCompleted = () => setCompletedTasks(completedTasks + 1);
+  // Increment the completed tasks counter and submit
+  const handleTaskCompleted = async () => {
+    const timeSpent = isWorkTimer ? (workTime * 60 - timeLeft) : (breakTime * 60 - timeLeft);
+
+    try {
+      taskObj ={
+        userId:user.id,
+        timespent:timeSpent
+      }
+      const response = await api.post("/task/create",taskObj)
+      console.log("TimeRes",response.data)
+      if(response.data.message === "saved"){
+        setCompletedTasks(completedTasks + 1)
+        resetTimer()
+      }
+    } catch (error) {
+      console.log("Time spent submission error")
+    }
+   
+  }
 
   // End the day and reset the timer and task counter
   const endDay = () => {

@@ -13,7 +13,6 @@ const AuthScreen = () => {
     };
     const dispatch = useDispatch()
     const handleLogin = () => {
-      // Perform login logic
       dispatch(setIsLoggedIn(true));
     };
   

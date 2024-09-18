@@ -1,61 +1,107 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Box, Paper } from '@mui/material';
-import './dashboard.css'; 
-import { MdMood, MdOutlineEnergySavingsLeaf, MdAdjust,MdOutlineThumbUp  } from "react-icons/md";
+import { Typography, Box, Paper, TextField } from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'; 
+import dayjs from 'dayjs';
+import { MdMood, MdOutlineEnergySavingsLeaf, MdAdjust, MdOutlineThumbUp } from "react-icons/md";
 import { FaTasks, FaClock } from "react-icons/fa";
 import Feedback from '../../components/feeback/Feedback';
+import './dashboard.css';
+import api from '../../api/api';
+import { useSelector } from 'react-redux';
+import { getUser } from '../../redux/userSlice';
+import Toast, { showToast } from '../../components/toast/Toast';
 
 const DashboardPage = () => {
-  const [completedTasks, setCompletedTasks] = useState(5); // Replace with actual data
-  const [totalWorkTime, setTotalWorkTime] = useState(300); // Total work time in minutes
+  const [performanceData,setPerformanceData] = useState([])
+  const [totalTimeSpent,setTotalTimeSpent] = useState(0)
   const [wellnessData, setWellnessData] = useState({
-    wellbeing: 4, // Out of 10
-    energy: 2, // Out of 10
+    wellbeing: 1, 
+    energy: 1, 
     mood: 1,
-    ambition:3
+    ambition: 1
   });
 
+  const user = useSelector(getUser)
+
+  const [selectedDate, setSelectedDate] = useState(dayjs()); 
+
+  // Fetch data based on the selected date
   useEffect(() => {
-    // Fetch actual data from backend or state management
-    setCompletedTasks(4)
-    setTotalWorkTime(3)
-    setWellnessData({
-      wellbeing:4,
-      mood:3,
-      ambition:5,
-      energy:2
-    })
-  }, []);
+    const fetchCheckinData = async () => {
+      const formattedDate = selectedDate.format('YYYY-MM-DD');
+
+      const response = await api.get(`checkins/${user.id}/date/${formattedDate}`)
+      const res = await api.get(`/task/user/${user.id}/date/${formattedDate}`)
+
+      if(response.data.data !== null){
+        setWellnessData(response.data.data);
+      } else{
+        showToast("No data for this day","error")
+        setWellnessData({
+          wellbeing: 0, 
+          energy: 0, 
+          mood: 0,
+          ambition: 0
+        })
+      }
+
+      if(res.data.data !== null){
+        setPerformanceData(res.data.data)
+        calculateTotalTimeSpent(res.data.data)
+      }
+      
+    };
+
+    fetchCheckinData();
+  }, [selectedDate,user.id]);
+
+  const calculateTotalTimeSpent = (data) => {
+    const totalTimeInSeconds = data.reduce((acc, task) => acc + task.timespent, 0);
+    const totalTimeInMinutes = Math.floor(totalTimeInSeconds / 60);
+    setTotalTimeSpent(totalTimeInMinutes);
+  };
 
   return (
     <div className="dashboard-container">
+      <Toast/>
       <Typography variant="h3" className="dashboard-title">
         Performance and Rating
       </Typography>
 
+      {/* Wrap the date picker in LocalizationProvider */}
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        {/* Date Picker to select the date */}
+        <Box className="date-picker-container" sx={{ mb: 4,marginTop:5 }}>
+          <DatePicker
+            label="Select Date"
+            value={selectedDate}
+            onChange={(newDate) => setSelectedDate(newDate)}
+            renderInput={(params) => <TextField {...params} />}
+          />
+        </Box>
+      </LocalizationProvider>
+
       <Box className="dashboard-section">
-        {/*  
-          * Work Performance Section
-        */}
+        {/* Work Performance Section */}
         <Paper className="dashboard-card" elevation={3}>
           <Typography variant="h5">Work Performance</Typography>
           <div>
             <FaTasks />
             <Typography variant="body1">
-              Tasks Completed Today: {completedTasks}
+              Tasks Completed on {selectedDate.format('MMMM D, YYYY')}: {performanceData.length}
             </Typography>
           </div>
           <div>
             <FaClock />
             <Typography variant="body1">
-              Total Work Time: {Math.floor(totalWorkTime / 60)} hours {totalWorkTime % 60} minutes
+            Total Time Spent on Tasks: {Math.floor(totalTimeSpent / 60)} hours {totalTimeSpent % 60} minutes
             </Typography>
           </div>
         </Paper>
 
-        {/* 
-          * Wellness Data Section
-         */}
+        {/* Wellness Data Section */}
         <Paper className="dashboard-card" elevation={3}>
           <Typography variant="h5">Wellness Check-in</Typography>
           <div>
@@ -83,7 +129,9 @@ const DashboardPage = () => {
             </Typography>
           </div>
         </Paper>
-        <Feedback/>
+
+        {/* Feedback button component */}
+        <Feedback />
       </Box>
     </div>
   );

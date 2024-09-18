@@ -1,14 +1,38 @@
 import React, { useState } from 'react';
 import { Dialog, DialogActions, DialogContent, DialogTitle, Slider, Button, Typography, Box } from '@mui/material';
 import './quiz.css'; 
+import { useSelector } from 'react-redux';
+import { getUser } from '../../redux/userSlice';
+import api from '../../api/api';
+import { showToast } from '../toast/Toast';
 
 const QuizPopUp = ({ open, onClose }) => {
   const [mood, setMood] = useState(1);
   const [energy, setEnergy] = useState(1);
   const [ambition, setAmbition] = useState(1);
   const [wellbeing, setWellBeing] = useState(1);
+  const user = useSelector(getUser)
 
-  const handleSubmit = () => {
+  let checkinObj;
+
+  const handleSubmit = async () => {
+    try{
+        checkinObj = {
+          mood: mood,
+          energy: energy,
+          ambition: ambition,
+          wellbeing: wellbeing,
+          userId: user.id
+        }
+        const response = await api.post("/checkins/create",checkinObj)
+        console.log("CheckinRes",response.data)
+        if(response.data.message === "created"){
+          showToast("Success","success ")
+        }
+
+    }catch(error){
+      console.log("Checkin quiz submission failed")
+    }
     console.log({ mood, energy, ambition, wellbeing });
     onClose();
   };

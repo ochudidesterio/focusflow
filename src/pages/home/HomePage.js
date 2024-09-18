@@ -4,6 +4,10 @@ import QuizPopUp from '../../components/quiz/QuizPopUp';
 import { MdBrightness5, MdOutlinePunchClock, MdBarChart,MdHeadphones,MdFeedback } from "react-icons/md";
 import './home.css';  
 import Feedback from '../../components/feeback/Feedback';
+import { useSelector } from 'react-redux';
+import { getUser } from '../../redux/userSlice';
+import Toast from '../../components/toast/Toast';
+import api from '../../api/api';
 
 const motivationalQuotes = [
   "Stay focused and never give up!",
@@ -17,20 +21,39 @@ const HomePage = () => {
   const [showQuiz, setShowQuiz] = useState(false);
   const [quote, setQuote] = useState('');
   const navigate = useNavigate();
+  const user = useSelector(getUser)
+  console.log("LogedUser",user)
+
+  const dateToFetch = new Date().toISOString().split('T')[0];
+
 
   useEffect(() => {
-    const lastLoginDate = 1;
-    const today = 2;
-
-    if (lastLoginDate !== today) {
-      setShowQuiz(true);
-    }
-
     setQuote(motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)]);
   }, [navigate]);
 
+  useEffect(() => {
+    const fetchCheckinData = async () => {
+  
+      try {
+        const response = await api.get(`checkins/${user.id}/date/${dateToFetch}`);
+  
+        if (response.data.message === "not found") {
+          setShowQuiz(true);
+        } 
+        
+      } catch (error) {
+        console.error('Error fetching check-in data:', error);
+      }
+    };
+  
+    fetchCheckinData();
+  }, [dateToFetch, user.id]);
+  
+
   return (
     <div className="homepage-container">
+      <Toast/>
+      <h3>Hi {user.username}</h3>
       <h1>Welcome to FocusFlow!</h1>
 
       {/* App Explanation */}

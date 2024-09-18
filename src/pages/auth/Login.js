@@ -1,14 +1,38 @@
 import React, { useState } from "react";
 import { TextField, Button, Typography, Box } from '@mui/material';
 import "./auth.css";
+import api from "../../api/api";
+import { useDispatch } from "react-redux";
+import { setUser } from "../../redux/userSlice";
 
 const Login = ({ onLogin, onSwitchToRegister }) => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [authError,setAuthError] = useState("")
+  const dispatch = useDispatch()
 
-  const handleLogin = (e) => {
+  let logObj;
+
+  const handleLogin = async (e) => {
     e.preventDefault();
-    onLogin(); // Add actual login logic
+
+    logObj = {
+      email: email,
+      password: password
+    }
+
+    try {
+      const response = await api.post("/user/login", logObj);
+      if (response.data.message === "Success") {
+        dispatch(setUser(response.data.data.user))
+        onLogin();
+      } else {
+        setAuthError(response.data.message);
+      }
+    } catch (error) {
+      console.error("Login Error", error);
+      setAuthError("An error occurred. Please try again.");
+    }
   };
 
   return (
@@ -20,15 +44,20 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
         <Typography variant="body1" gutterBottom>
           Please enter your credentials to log in to your account.
         </Typography>
+        {authError && (
+          <Typography variant="body2" color="error" align="center" sx={{ mt: 2 }}>
+            {authError}
+          </Typography>
+        )}
         <form onSubmit={handleLogin}>
           <TextField
-            label="Username"
+            label="Email"
             variant="outlined"
             fullWidth
             margin="normal"
-            value={username}
+            value={email}
             size="small"
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
             required
           />
           <TextField

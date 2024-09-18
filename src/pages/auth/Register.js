@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { TextField, Button, Typography, Box } from '@mui/material';
-import "./auth.css"; // Same CSS for both login and register
+import "./auth.css"; 
+import api from "../../api/api";
 
 const Register = ({ onRegister, onSwitchToLogin }) => {
   const [name, setName] = useState("");
@@ -8,9 +9,21 @@ const Register = ({ onRegister, onSwitchToLogin }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleRegister = (e) => {
+  let regObj;
+
+  const handleRegister = async (e) => {
     e.preventDefault();
-    onRegister(); // Add actual register logic
+    regObj ={
+      name: name,
+      username: username,
+      email: email,
+      password: password,
+    }
+    const response = await api.post("/user/create",regObj)
+    if(response.data.message === "created"){
+      onRegister();
+      onSwitchToLogin()
+    }
   };
 
   return (
