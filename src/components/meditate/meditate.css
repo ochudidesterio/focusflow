@@ -32,7 +32,7 @@
   }
   
   .music-controls button {
-    background-color: #d13838;
+    background-color: #582a2a;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -40,14 +40,15 @@
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+   
   }
   
   .music-controls button:hover {
-    background-color: #c25023;
+    background-color: #74594f;
   }
   
   /* Music selection buttons */
-  .music-selection {
+  .music-selection, .controls {
     display: flex;
     justify-content: center;
     gap: 10px;

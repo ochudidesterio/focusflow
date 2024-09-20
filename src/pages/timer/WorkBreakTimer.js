@@ -39,13 +39,14 @@ const breakSuggestions = [
 
 
 const WorkBreakTimer = () => {
-  const [workTime, setWorkTime] = useState(1); // Default work time
-  const [breakTime, setBreakTime] = useState(0.5); // Default break time
+  const [workTime, setWorkTime] = useState(25); // Default work time
+  const [breakTime, setBreakTime] = useState(5); // Default break time
   const [timeLeft, setTimeLeft] = useState(workTime * 60); // Initialize timer with work time
   const [isRunning, setIsRunning] = useState(false);
-  const [isWorkTimer, setIsWorkTimer] = useState(true); // Default to work timer
+  const [isWorkTimer, setIsWorkTimer] = useState(true); 
   const [showQuotePopup, setShowQuotePopup] = useState(true);
   const [showBreakPopup, setShowBreakPopup] = useState(false);
+  const [showStickyPopUp,setShowStickyPopUp] = useState(false)
   const [completedTasks, setCompletedTasks] = useState(0);
   const [playSound, setPlaySound] = useState(false);
   const [selectedQuote, setSelectedQuote] = useState('');
@@ -76,6 +77,7 @@ const WorkBreakTimer = () => {
     }
   }, [showBreakPopup]);
 
+
   // Timer logic
   useEffect(() => {
     if (isRunning && timeLeft > 0) {
@@ -88,7 +90,8 @@ const WorkBreakTimer = () => {
         setShowBreakPopup(true);
         setSelectedSuggestion(breakSuggestions[Math.floor(Math.random() * breakSuggestions.length)]);
       } else {
-        alert('Break over! Time to get back to work.');
+        //alert('Break over! Time to get back to work.');
+        setShowStickyPopUp(true)
       }
       setIsWorkTimer(!isWorkTimer);
       setTimeLeft(isWorkTimer ? breakTime * 60 : workTime * 60);
@@ -128,7 +131,6 @@ const WorkBreakTimer = () => {
         timespent:timeSpent
       }
       const response = await api.post("/task/create",taskObj)
-      console.log("TimeRes",response.data)
       if(response.data.message === "saved"){
         setCompletedTasks(completedTasks + 1)
         resetTimer()
@@ -194,6 +196,18 @@ const WorkBreakTimer = () => {
       </Modal>
 
       <Modal
+        isOpen={showStickyPopUp}
+        onRequestClose={() => setShowStickyPopUp(false)}
+        className="modal"
+      >
+        <div className="modal-content">
+          <h2>Ready to start working!</h2>
+          <p>{selectedQuote}</p>
+          <button onClick={() => setShowStickyPopUp(false)}><MdCheckCircle size={30}/></button>
+        </div>
+      </Modal>
+
+      <Modal
         isOpen={showBreakPopup}
         onRequestClose={() => setShowBreakPopup(false)}
         className='modal'
@@ -204,14 +218,13 @@ const WorkBreakTimer = () => {
           <button onClick={() => setShowBreakPopup(false)}><MdCheckCircle size={30}/></button>
         </div>
       </Modal>
+      {/* Meditate component */}
       <Meditate/>
+      
       <button className="end-day-button" onClick={endDay}>End Day</button>
 
+      {/* Feedback component */}
       <Feedback />
-
-
-
-
     </div>
   );
 };

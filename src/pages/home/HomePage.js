@@ -22,7 +22,6 @@ const HomePage = () => {
   const [quote, setQuote] = useState('');
   const navigate = useNavigate();
   const user = useSelector(getUser)
-  console.log("LogedUser",user)
 
   const dateToFetch = new Date().toISOString().split('T')[0];
 
@@ -58,7 +57,7 @@ const HomePage = () => {
 
       {/* App Explanation */}
       <div className="app-description">
-        <p>FocusFlow is designed to help you maintain productivity through focus sessions and well-timed breaks. Track your work habits, improve well-being, and stay motivated with insightful feedback and personalized tools.</p>
+        <p>FocusFlow is designed to help you maintain productivity through focus sessions and well-timed breaks. Track your work habits, improve well-being, and stay motivated with insightful feedback and personalised tools.</p>
       </div>
 
       {/* Feature Highlights */}

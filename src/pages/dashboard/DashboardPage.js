@@ -104,10 +104,11 @@ const DashboardPage = () => {
         {/* Wellness Data Section */}
         <Paper className="dashboard-card" elevation={3}>
           <Typography variant="h5">Wellness Check-in</Typography>
+          
           <div>
-            <MdOutlineThumbUp />
+            <MdMood />
             <Typography variant="body1">
-              Well-being Rating: {wellnessData.wellbeing} / 5
+              Mood Rating: {wellnessData.mood} / 5
             </Typography>
           </div>
           <div>
@@ -116,16 +117,17 @@ const DashboardPage = () => {
               Energy Rating: {wellnessData.energy} / 5
             </Typography>
           </div>
-          <div>
-            <MdMood />
-            <Typography variant="body1">
-              Mood Rating: {wellnessData.mood} / 5
-            </Typography>
-          </div>
+         
           <div>
             <MdAdjust />
             <Typography variant="body1">
               Ambition Rating: {wellnessData.ambition} / 5
+            </Typography>
+          </div>
+          <div>
+            <MdOutlineThumbUp />
+            <Typography variant="body1">
+              Well-being Rating: {wellnessData.wellbeing} / 5
             </Typography>
           </div>
         </Paper>

@@ -1,4 +1,3 @@
-// src/features/userSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
@@ -10,9 +9,6 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    // setUsername(state, action) {
-    //   state.username = action.payload;
-    // },
     setIsLoggedIn:(state,{payload})=>{
         state.isloggedIn = payload
     },

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
-import './feedback.css'; // Import external CSS for styling
+import './feedback.css'; 
 
 const Feedback = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -17,10 +17,10 @@ const Feedback = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Construct the mailto link
-    const mailtoLink = `mailto:desochudi@outlook.com?subject=Feedback%20from%20${encodeURIComponent(feedback.name)}&body=Name:%20${encodeURIComponent(feedback.name)}%0D%0AEmail:%20${encodeURIComponent(feedback.email)}%0D%0AMessage:%20${encodeURIComponent(feedback.message)}`;
+    //mailto link
+    const mailtoLink = `mailto:p2772570@my365.dmu.ac.uk?subject=Feedback%20from%20${encodeURIComponent(feedback.name)}&body=Name:%20${encodeURIComponent(feedback.name)}%0D%0AEmail:%20${encodeURIComponent(feedback.email)}%0D%0AMessage:%20${encodeURIComponent(feedback.message)}`;
 
-    // Open the mailto link
+    //Open the mailto link
     window.location.href = mailtoLink;
 
     // Close the modal
@@ -65,6 +65,7 @@ const Feedback = () => {
             value={feedback.message}
             onChange={handleInputChange}
             required
+            rows={10}
           ></textarea>
           <div className="modal-actions">
             <button type="submit" className="submit-button">Submit</button>
