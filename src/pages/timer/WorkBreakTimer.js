@@ -61,21 +61,21 @@ const WorkBreakTimer = () => {
     setSelectedQuote(motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)]);
   }, []);
 
-  // Close the Motivational Quote Popup after 10 seconds
-  useEffect(() => {
-    if (showQuotePopup) {
-      const timer = setTimeout(() => setShowQuotePopup(false), 10000); // 10 seconds
-      return () => clearTimeout(timer);
-    }
-  }, [showQuotePopup]);
+  // // Close the Motivational Quote Popup after 10 seconds
+  // useEffect(() => {
+  //   if (showQuotePopup) {
+  //     const timer = setTimeout(() => setShowQuotePopup(false), 10000); // 10 seconds
+  //     return () => clearTimeout(timer);
+  //   }
+  // }, [showQuotePopup]);
 
-  // Close the Break Suggestion Popup after 10 seconds
-  useEffect(() => {
-    if (showBreakPopup) {
-      const timer = setTimeout(() => setShowBreakPopup(false), 10000); // 10 seconds
-      return () => clearTimeout(timer);
-    }
-  }, [showBreakPopup]);
+  // // Close the Break Suggestion Popup after 10 seconds
+  // useEffect(() => {
+  //   if (showBreakPopup) {
+  //     const timer = setTimeout(() => setShowBreakPopup(false), 10000); // 10 seconds
+  //     return () => clearTimeout(timer);
+  //   }
+  // }, [showBreakPopup]);
 
 
   // Timer logic
@@ -133,7 +133,7 @@ const WorkBreakTimer = () => {
       const response = await api.post("/task/create",taskObj)
       if(response.data.message === "saved"){
         setCompletedTasks(completedTasks + 1)
-        resetTimer()
+        //resetTimer()
       }
     } catch (error) {
       console.log("Time spent submission error")
@@ -220,7 +220,7 @@ const WorkBreakTimer = () => {
       </Modal>
       {/* Meditate component */}
       <Meditate/>
-      
+
       <button className="end-day-button" onClick={endDay}>End Day</button>
 
       {/* Feedback component */}

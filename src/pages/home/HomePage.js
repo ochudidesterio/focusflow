@@ -73,7 +73,7 @@ const HomePage = () => {
         </div>
         <div className="feature">
           <MdBarChart className="feature-icon"/>
-          Dashboard for analyzing work patterns
+          Dashboard for analysing work patterns
         </div>
         <div className="feature">
           <MdHeadphones className="feature-icon"/>

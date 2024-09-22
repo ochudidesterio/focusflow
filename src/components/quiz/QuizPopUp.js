@@ -60,58 +60,23 @@ const QuizPopUp = ({ open, onClose }) => {
         <Box className="slider-container">
           <Box className="slider-item">
             <Typography gutterBottom>How would you rate your current mood: {mood}</Typography>
-            <Slider
-              value={mood}
-              onChange={(e, newValue) => setMood(newValue)}
-              aria-labelledby="mood-slider"
-              min={1}
-              max={5}
-              step={1}
-              valueLabelDisplay="on"
-              className="custom-slider"
-            />
+            <Slider value={mood} onChange={(e, newValue) => setMood(newValue)} aria-labelledby="mood-slider" min={1} max={5} step={1} valueLabelDisplay="on" className="custom-slider" />
           </Box>
 
           <Box className="slider-item">
             <Typography gutterBottom>How would you rate your current energy level: {energy}</Typography>
-            <Slider
-              value={energy}
-              onChange={(e, newValue) => setEnergy(newValue)}
-              aria-labelledby="energy-slider"
-              min={1}
-              max={5}
-              step={1}
-              valueLabelDisplay="on"
-              className="custom-slider"
-            />
+            <Slider value={energy} onChange={(e, newValue) => setEnergy(newValue)} aria-labelledby="energy-slider" min={1} max={5} step={1} valueLabelDisplay="on" className="custom-slider" />
           </Box>
 
           <Box className="slider-item">
             <Typography gutterBottom>How ambitious are you today: {ambition}</Typography>
-            <Slider
-              value={ambition}
-              onChange={(e, newValue) => setAmbition(newValue)}
-              aria-labelledby="ambition-slider"
-              min={1}
-              max={5}
-              step={1}
-              valueLabelDisplay="on"
-              className="custom-slider"
-            />
+            <Slider value={ambition} onChange={(e, newValue) => setAmbition(newValue)} aria-labelledby="ambition-slider" min={1} max={5} step={1} valueLabelDisplay="on" className="custom-slider" />
           </Box>
 
           <Box className="slider-item">
             <Typography gutterBottom>How would you rate your overall well-being: {wellbeing}</Typography>
-            <Slider
-              value={wellbeing}
-              onChange={(e, newValue) => setWellBeing(newValue)}
-              aria-labelledby="wellbeing-slider"
-              min={1}
-              max={5}
-              step={1}
-              valueLabelDisplay="on"
-              className="custom-slider"
-            />
+            <Slider value={wellbeing} onChange={(e, newValue) => setWellBeing(newValue)} aria-labelledby="wellbeing-slider" min={1} max={5} step={1} valueLabelDisplay="on" className="custom-slider" />
+
           </Box>
         </Box>
       </DialogContent>
