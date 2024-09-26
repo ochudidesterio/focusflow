@@ -3,8 +3,8 @@ import { Dialog, DialogActions, DialogContent, DialogTitle, Slider, Button, Typo
 import './quiz.css'; 
 import { useSelector } from 'react-redux';
 import { getUser } from '../../redux/userSlice';
-import api from '../../api/api';
 import { showToast } from '../toast/Toast';
+import supabase from '../../config/SupabaseClient';
 
 const QuizPopUp = ({ open, onClose }) => {
   const [mood, setMood] = useState(1);
@@ -13,29 +13,44 @@ const QuizPopUp = ({ open, onClose }) => {
   const [wellbeing, setWellBeing] = useState(1);
   const user = useSelector(getUser)
 
-  let checkinObj;
+  const createdAt = new Date().toISOString()
 
-  const handleSubmit = async () => {
-    try{
-        checkinObj = {
-          mood: mood,
-          energy: energy,
-          ambition: ambition,
-          wellbeing: wellbeing,
-          userId: user.id
-        }
-        const response = await api.post("/checkins/create",checkinObj)
-        console.log("CheckinRes",response.data)
-        if(response.data.message === "created"){
-          showToast("Success","success ")
-        }
 
-    }catch(error){
-      console.log("Checkin quiz submission failed")
+
+  const submit = async () => {
+    try {
+      // Create the checkin object
+      const checkinObj = {
+       
+        mood: mood,
+        energy: energy,
+        ambition: ambition,
+        wellbeing: wellbeing,
+        user_id: user.id,
+        created: createdAt,
+      };
+  
+      // Insert the object into the 'DailyCheckin' table in Supabase
+      const { data, error } = await supabase
+        .from('DailyCheckin')
+        .insert([checkinObj]);
+  
+      if (error) {
+        throw error;
+      }
+  
+      if (data) {
+        console.log("CheckinRes", data);
+        showToast("Success", "success");
+      }
+    } catch (error) {
+      console.log("Checkin quiz submission failed:", error.message);
     }
-    console.log({ mood, energy, ambition, wellbeing });
+  
+    console.log({ createdAt,mood, energy, ambition, wellbeing });
     onClose();
   };
+  
 
   return (
     <Dialog
@@ -85,7 +100,7 @@ const QuizPopUp = ({ open, onClose }) => {
         <Button onClick={onClose} variant="outlined" sx={{ borderColor: '#4CAF50', color: '#4CAF50' }}>
           Cancel
         </Button>
-        <Button onClick={handleSubmit} variant="contained" sx={{ backgroundColor: '#4CAF50', color: '#fff' }}>
+        <Button onClick={submit} variant="contained" sx={{ backgroundColor: '#4CAF50', color: '#fff' }}>
           Submit
         </Button>
       </DialogActions>

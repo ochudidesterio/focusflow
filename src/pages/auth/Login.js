@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { TextField, Button, Typography, Box } from '@mui/material';
 import "./auth.css";
-import api from "../../api/api";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../redux/userSlice";
+import supabase from "../../config/SupabaseClient";
 
 // Login component that receives two props: onLogin (function to handle successful login) 
 // and onSwitchToRegister (function to switch to the registration form).
@@ -20,35 +20,43 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
   // Object to hold login credentials.
   let logObj;
 
-  // Function to handle the login form submission.
-  const handleLogin = async (e) => {
-    // Prevents the default form submission behavior (page reload).
+  const login = async (e) => {
     e.preventDefault();
-
+  
     // Create login object with email and password entered by the user.
     logObj = {
       email: email,
       password: password
     }
-
+  
     try {
-      // Send login credentials to the API endpoint.
-      const response = await api.post("/user/login", logObj);
-
-      // If login is successful, dispatch the user data and call the onLogin function.
-      if (response.data.message === "Success") {
-        dispatch(setUser(response.data.data.user))
-        onLogin();
-      } else {
-        // If login fails, set the error message returned from the API.
-        setAuthError(response.data.message);
+      // Query the 'User' table with matching email and password from logObj
+      const { data, error } = await supabase
+        .from('User')
+        .select()
+        .eq('email', logObj.email)
+        .eq('password', logObj.password); 
+  
+      if (error) {
+        throw error;
       }
+  
+      if (data.length > 0) {
+        // User found, proceed with login
+        console.log('Login successful', data[0]);
+        dispatch(setUser(data[0]))
+        onLogin()
+      } else {
+        // No matching user
+        setAuthError("Invalid email or password.");
+      }
+  
     } catch (error) {
-      // Log any errors that occur during the login request and display a generic error message.
-      console.error("Login Error", error);
       setAuthError("An error occurred. Please try again.");
+      console.error(error.message);
     }
   };
+  
 
   // JSX for the login form.
   return (
@@ -69,7 +77,7 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
           </Typography>
         )}
         {/* Login form */}
-        <form onSubmit={handleLogin}>
+        <form onSubmit={login}>
           <TextField
             label="Email"
             variant="outlined"

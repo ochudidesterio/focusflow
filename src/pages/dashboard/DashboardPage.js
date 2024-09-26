@@ -4,15 +4,14 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
-// import { FaTasks, FaClock } from 'react-icons/fa';
 import Feedback from '../../components/feeback/Feedback';
 import './dashboard.css';
-import api from '../../api/api';
 import { useSelector } from 'react-redux';
 import { getUser } from '../../redux/userSlice';
 import Toast, { showToast } from '../../components/toast/Toast';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import supabase from '../../config/SupabaseClient';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -24,36 +23,62 @@ const DashboardPage = () => {
   const [selectedStartDate, setSelectedStartDate] = useState(dayjs());
   const [selectedEndDate, setSelectedEndDate] = useState(dayjs());
 
-  // Fetch data based on the selected date
   useEffect(() => {
     const fetchCheckinData = async () => {
       const formattedStartDate = selectedStartDate.format('YYYY-MM-DD');
       const formattedEndDate = selectedEndDate.format('YYYY-MM-DD');
-
-      const response = await api.get(`checkins/${user.id}/start/${formattedStartDate}/end/${formattedEndDate}`);
-      const res = await api.get(`/task/user/${user.id}/start/${formattedStartDate}/end/${formattedEndDate}`);
-
-      if (response.data.data !== null) {
-        setWellnessData(response.data.data);
-      } else {
-        showToast('No data for this day', 'error');
-        setWellnessData([]);
-      }
-
-      if (res.data.data !== null) {
-        setPerformanceData(res.data.data);
-        //calculateTotalTimeSpent(res.data.data);
+  
+      try {
+        // Fetch check-ins for the given userId within the date range
+        const { data: checkinData, error: checkinError } = await supabase
+          .from('DailyCheckin')
+          .select()
+          .eq('user_id', user.id)
+          .gte('created', `${formattedStartDate}T00:00:00+00:00`)
+          .lte('created', `${formattedEndDate}T23:59:59+00:00`);
+  
+        if (checkinError) {
+          throw checkinError;
+        }
+  
+        // Fetch tasks for the given userId within the date range
+        const { data: taskData, error: taskError } = await supabase
+          .from('Task')
+          .select()
+          .eq('user_id', user.id)
+          .gte('created', `${formattedStartDate}T00:00:00+00:00`)
+          .lte('created', `${formattedEndDate}T23:59:59+00:00`);
+  
+        if (taskError) {
+          throw taskError;
+        }
+  
+        // Set wellness data (DailyCheckin) if data is available
+        if (checkinData && checkinData.length > 0) {
+          setWellnessData(checkinData);
+        } else {
+          showToast('No wellness data for this period', 'error');
+          setWellnessData([]);
+        }
+  
+        // Set performance data (Task) if data is available
+        if (taskData && taskData.length > 0) {
+          setPerformanceData(taskData);
+          // Optionally calculate total time spent
+          // calculateTotalTimeSpent(taskData);
+        } else {
+          showToast('No performance data for this period', 'error');
+          setPerformanceData([]);
+        }
+  
+      } catch (error) {
+        console.error('Error fetching data:', error.message);
       }
     };
-
+  
     fetchCheckinData();
   }, [selectedStartDate, selectedEndDate, user.id]);
 
-  // const calculateTotalTimeSpent = (data) => {
-  //   const totalTimeInSeconds = data.reduce((acc, task) => acc + task.timespent, 0);
-  //   const totalTimeInMinutes = Math.floor(totalTimeInSeconds / 60);
-  //   setTotalTimeSpent(totalTimeInMinutes);
-  // };
 
   // Extract labels (dates) and data for each wellness attribute
   const getChartDataForAttribute = (attribute) => {
@@ -73,15 +98,52 @@ const DashboardPage = () => {
     };
   };
 
+  
+
+  const processPerformanceData = () => {
+    // Group the performanceData by date
+    const groupedData = performanceData.reduce((acc, entry) => {
+      const date = dayjs(entry.created).format('YYYY-MM-DD'); // Group by the date (ignoring the time part)
+  
+      if (!acc[date]) {
+        acc[date] = {
+          totalTimeSpent: 0,
+          totalTasks: 0
+        };
+      }
+  
+      //Add the time spent and increment the task count
+      acc[date].totalTimeSpent += entry.timespent;
+      acc[date].totalTasks += 1;
+  
+      return acc;
+    }, {});
+  
+    //Convert grouped data into arrays suitable for the graph
+    const processedData = Object.keys(groupedData).map(date => ({
+      date,
+      totalTimeSpent: groupedData[date].totalTimeSpent,
+      totalTasks: groupedData[date].totalTasks
+    }));
+  
+    return processedData;
+  };
+  
+  // prepare labels and data for the total time spent graph
   const getTimeSpentData = () => {
-    const labels = performanceData.map((entry) => dayjs(entry.date).format('MMM D'));
-    const data = performanceData.map((entry) => entry.totalTimeSpent);
+    const processedData = processPerformanceData();
+    const labels = processedData.map((entry) => dayjs(entry.date).format('MMM D'));
+    const data = processedData.map((entry) => entry.totalTimeSpent);
+  
     return { labels, data };
   };
-
+  
+  // prepare labels and data for the total tasks graph
   const getTasksData = () => {
-    const labels = performanceData.map((entry) => dayjs(entry.date).format('MMM D'));
-    const data = performanceData.map((entry) => entry.totalTasks);
+    const processedData = processPerformanceData();
+    const labels = processedData.map((entry) => dayjs(entry.date).format('MMM D'));
+    const data = processedData.map((entry) => entry.totalTasks);
+  
     return { labels, data };
   };
 

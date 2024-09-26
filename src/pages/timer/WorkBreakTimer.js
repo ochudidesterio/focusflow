@@ -6,7 +6,7 @@ import Feedback from '../../components/feeback/Feedback';
 import Meditate from '../../components/meditate/Meditate';
 import { useSelector } from 'react-redux';
 import { getUser } from '../../redux/userSlice';
-import api from '../../api/api';
+import supabase from '../../config/SupabaseClient';
 
 
 // motivational quotes and break suggestions
@@ -39,8 +39,8 @@ const breakSuggestions = [
 
 
 const WorkBreakTimer = () => {
-  const [workTime, setWorkTime] = useState(25); // Default work time
-  const [breakTime, setBreakTime] = useState(5); // Default break time
+  const [workTime, setWorkTime] = useState(1); // Default work time
+  const [breakTime, setBreakTime] = useState(0.5); // Default break time
   const [timeLeft, setTimeLeft] = useState(workTime * 60); // Initialize timer with work time
   const [isRunning, setIsRunning] = useState(false);
   const [isWorkTimer, setIsWorkTimer] = useState(true); 
@@ -54,28 +54,11 @@ const WorkBreakTimer = () => {
 
   const user = useSelector(getUser)
 
-  let taskObj;
 
   // Set a random motivational quote when the component mounts
   useEffect(() => {
     setSelectedQuote(motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)]);
   }, []);
-
-  // // Close the Motivational Quote Popup after 10 seconds
-  // useEffect(() => {
-  //   if (showQuotePopup) {
-  //     const timer = setTimeout(() => setShowQuotePopup(false), 10000); // 10 seconds
-  //     return () => clearTimeout(timer);
-  //   }
-  // }, [showQuotePopup]);
-
-  // // Close the Break Suggestion Popup after 10 seconds
-  // useEffect(() => {
-  //   if (showBreakPopup) {
-  //     const timer = setTimeout(() => setShowBreakPopup(false), 10000); // 10 seconds
-  //     return () => clearTimeout(timer);
-  //   }
-  // }, [showBreakPopup]);
 
 
   // Timer logic
@@ -122,24 +105,38 @@ const WorkBreakTimer = () => {
   };
 
   // Increment the completed tasks counter and submit
-  const handleTaskCompleted = async () => {
+  const completeTask = async () => {
     const timeSpent = isWorkTimer ? (workTime * 60 - timeLeft) : (breakTime * 60 - timeLeft);
-
+  
     try {
-      taskObj ={
-        userId:user.id,
-        timespent:timeSpent
+      // Create task object with the data to insert
+      const taskObj = {
+        user_id: user.id,
+        timespent: timeSpent,
+        created: new Date().toISOString() 
+      };
+  
+      // Insert the taskObj into Supabase 'Task' table
+      const { data, error } = await supabase
+        .from('Task')
+        .insert([taskObj]);
+  
+      if (error) {
+        throw error;
       }
-      const response = await api.post("/task/create",taskObj)
-      if(response.data.message === "saved"){
-        setCompletedTasks(completedTasks + 1)
-        //resetTimer()
+  
+      if (data) {
+        // If successful, update the completed tasks count
+        setCompletedTasks(completedTasks + 1);
+        // Optionally, reset the timer or other related logic
+        // resetTimer();
       }
+  
     } catch (error) {
-      console.log("Time spent submission error")
+      console.log("Time spent submission error:", error.message);
     }
-   
-  }
+  };
+  
 
   // End the day and reset the timer and task counter
   const endDay = () => {
@@ -175,7 +172,7 @@ const WorkBreakTimer = () => {
         <button onClick={startTimer}>Start</button>
         <button onClick={pauseTimer}>Pause</button>
         <button onClick={resetTimer}>Reset</button>
-        <button onClick={handleTaskCompleted}>Task Completed</button>
+        <button onClick={completeTask}>Task Completed</button>
       </div>
 
       <div className="task-counter">

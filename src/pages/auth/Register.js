@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { TextField, Button, Typography, Box } from '@mui/material';
 import "./auth.css"; 
-import api from "../../api/api";
+import supabase from "../../config/SupabaseClient";
 
 const Register = ({ onRegister, onSwitchToLogin }) => {
   const [name, setName] = useState("");
@@ -9,22 +9,38 @@ const Register = ({ onRegister, onSwitchToLogin }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  let regObj;
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    regObj ={
+    
+    // Create registration object with user details
+    const regObj = {
       name: name,
       username: username,
       email: email,
-      password: password,
-    }
-    const response = await api.post("/user/create",regObj)
-    if(response.data.message === "created"){
-      onRegister();
-      onSwitchToLogin()
+      password: password, // Ensure you handle password securely
+    };
+  
+    try {
+      // Insert user into the Supabase 'User' table
+      const { data, error } = await supabase
+        .from('User')
+        .insert([regObj]);
+  
+      if (error) {
+        throw new Error(error.message); // Handle error appropriately
+      }
+        onRegister(); 
+        onSwitchToLogin(); 
+        console.log("RegData: ",data)
+
+      
+    } catch (error) {
+      console.error("Registration error:", error.message);
+      // Optionally display an error message to the user
     }
   };
+  
 
   return (
     <div className="auth-container">

@@ -7,7 +7,7 @@ import Feedback from '../../components/feeback/Feedback';
 import { useSelector } from 'react-redux';
 import { getUser } from '../../redux/userSlice';
 import Toast from '../../components/toast/Toast';
-import api from '../../api/api';
+import supabase from '../../config/SupabaseClient';
 
 const motivationalQuotes = [
   "Stay focused and never give up!",
@@ -30,23 +30,37 @@ const HomePage = () => {
     setQuote(motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)]);
   }, [navigate]);
 
+
   useEffect(() => {
     const fetchCheckinData = async () => {
-  
       try {
-        const response = await api.get(`checkins/${user.id}/date/${dateToFetch}`);
-  
-        if (response.data.message === "not found") {
-          setShowQuiz(true);
-        } 
         
+  
+        // Fetch check-in data for the user where the created_at date matches today's date
+        const { data, error } = await supabase
+          .from('DailyCheckin')
+          .select()
+          .eq('user_id', user.id)
+          .gte('created', `${dateToFetch}T00:00:00+00:00`)  // Check from the start of the day
+          .lte('created', `${dateToFetch}T23:59:59+00:00`); // Check until the end of the day
+  
+        if (error) {
+          throw error;
+        }
+  
+        // If no data is found for today's date, show the quiz
+        if (data.length === 0) {
+          setShowQuiz(true);
+        }
+  
       } catch (error) {
-        console.error('Error fetching check-in data:', error);
+        console.error('Error fetching check-in data:', error.message);
       }
     };
   
     fetchCheckinData();
   }, [dateToFetch, user.id]);
+  
   
 
   return (
