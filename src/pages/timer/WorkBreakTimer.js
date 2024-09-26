@@ -39,8 +39,8 @@ const breakSuggestions = [
 
 
 const WorkBreakTimer = () => {
-  const [workTime, setWorkTime] = useState(1); // Default work time
-  const [breakTime, setBreakTime] = useState(0.5); // Default break time
+  const [workTime, setWorkTime] = useState(25); // Default work time
+  const [breakTime, setBreakTime] = useState(5); // Default break time
   const [timeLeft, setTimeLeft] = useState(workTime * 60); // Initialize timer with work time
   const [isRunning, setIsRunning] = useState(false);
   const [isWorkTimer, setIsWorkTimer] = useState(true); 
