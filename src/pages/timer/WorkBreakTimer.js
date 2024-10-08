@@ -109,26 +109,30 @@ const WorkBreakTimer = () => {
     const timeSpent = isWorkTimer ? (workTime * 60 - timeLeft) : (breakTime * 60 - timeLeft);
   
     try {
-      // Create task object with the data to insert
       const taskObj = {
         user_id: user.id,
         timespent: timeSpent,
         created: new Date().toISOString() 
       };
   
-      // Insert the taskObj into Supabase 'Task' table
+      // Insert task into Supabase 'Task' table
       const { data, error } = await supabase
         .from('Task')
-        .insert([taskObj]);
+        .insert([taskObj]).select();
   
       if (error) {
         throw error;
       }
   
+       // Log the response data
+       console.log("Task data :", taskObj);
+      // Log the response data
+      console.log("Task data response:", data);
+  
       if (data) {
-        // If successful, update the completed tasks count
+        // If insertion is successful
         setCompletedTasks(completedTasks + 1);
-        // Optionally, reset the timer or other related logic
+        // Optionally, reset the timer
         // resetTimer();
       }
   
@@ -136,6 +140,7 @@ const WorkBreakTimer = () => {
       console.log("Time spent submission error:", error.message);
     }
   };
+  
   
 
   // End the day and reset the timer and task counter
